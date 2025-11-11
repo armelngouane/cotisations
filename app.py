@@ -2,8 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+# Logo de l'app
+st.set_page_config(page_icon="static/Logo_EEC.jpg")
+
+
 # Titre de l'app
-st.title("🔍 Recherche de Cotisations Mensuelles CDC 2025")
+st.title("🔍 Cotisations Mensuelles CDC 2025")
 st.write("Tapez une partie de votre nom (ex. : 'NGOUANE' ou 'Marie') et cliquez sur 'Rechercher' pour voir vos infos.")
 
 # Charger le fichier Excel
