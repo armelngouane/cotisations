@@ -4,7 +4,7 @@ import numpy as np
 
 # Titre de l'app
 st.title("🔍 Recherche de Cotisations Mensuelles CDC 2025")
-st.write("Tapez une partie de votre nom (ex. : 'BAKANKIO' ou 'Henriette') et cliquez sur 'Rechercher' pour voir vos infos.")
+st.write("Tapez une partie de votre nom (ex. : 'NGOUANE' ou 'Marie') et cliquez sur 'Rechercher' pour voir vos infos.")
 
 # Charger le fichier Excel
 @st.cache_data
@@ -31,7 +31,7 @@ def load_data():
 df_main, df_contribs = load_data()
 
 # Interface de recherche
-nom_recherche = st.text_input("Entrez une partie de votre nom :", placeholder="Ex. : BAKANKIO")
+nom_recherche = st.text_input("Entrez une partie de votre nom :", placeholder="Ex. : NGOUANE")
 if st.button("🔍 Rechercher"):
     if nom_recherche:
         # Recherche insensible à la casse
@@ -58,4 +58,3 @@ if st.button("🔍 Rechercher"):
 st.sidebar.title("💡 Astuces")
 st.sidebar.write("- Tapez au moins 3-4 lettres pour de meilleurs résultats.")
 st.sidebar.write("- Si plusieurs personnes ont des noms similaires, tous s'afficheront.")
-st.sidebar.write("- Pour les réclamations, notez les chiffres et contactez le responsable.")
