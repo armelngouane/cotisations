@@ -34,8 +34,8 @@ def load_data():
         # 'Novembre' est déjà sans prefixe
     })
     
-    # Nettoyer : garder seulement les lignes avec N° valide
-    df_main = df_main[df_main['N°'].notna() & df_main['N°'].apply(lambda x: str(x).isdigit() or pd.isna(x))]
+    # Nettoyer : garder seulement les lignes avec N° valide (gérer les floats comme 1.0)
+    df_main = df_main[df_main['N°'].notna() & df_main['N°'].apply(lambda x: str(x).replace('.0', '').isdigit())]
     df_main = df_main.dropna(subset=['Noms et prénoms'])
     df_main = df_main[df_main['Noms et prénoms'] != 'TOTAL']  # Exclure les totaux
     
