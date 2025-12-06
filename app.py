@@ -2,9 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# Logo de l'app
+# Configuration de la page
 st.set_page_config(page_icon="static/Logo_EEC.jpg")
-
 
 # Titre de l'app
 st.title("🔍 Cotisations Mensuelles CDC 2025")
@@ -13,12 +12,27 @@ st.write("Tapez une partie de votre nom (ex. : 'NGOUANE' ou 'Marie') et cliquez 
 # Charger le fichier Excel
 @st.cache_data
 def load_data():
-    # Lire la feuille principale (LISTE 1 et 2)
-    df_main = pd.read_excel('COTISATIONS MENSUELLES CDC 2025 AU 05-10-25.xlsx', sheet_name=0, header=4)
-    df_main.columns = ['N°', 'Noms et prénoms', 'Solde au 31/12/2024', 'Janvier', 'Février', 'Mars', 
-                       'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 
-                       'Renflouement caisse', 'Cotisations échues', 'Cotisations période', 
-                       'Solde période', 'Solde cumulé', 'CEPCA']
+    # Lire la feuille principale
+    df_main = pd.read_excel('COTISATIONS MENSUELLES CDC 2025 AU 05-10-25.xlsx', sheet_name=0, header=0)
+    
+    # Supprimer les colonnes inutiles (duplicat et vide)
+    df_main = df_main.drop(columns=['Noms et prénoms.1', 'Unnamed: 3'], errors='ignore')
+    
+    # Renommer les colonnes des mois pour simplifier (enlever 'Cotisations ')
+    df_main = df_main.rename(columns={
+        'Cotisations Janvier': 'Janvier',
+        'Cotisations Février': 'Février',
+        'Cotisations Mars': 'Mars',
+        'Cotisations Avril': 'Avril',
+        'Cotisations Mai': 'Mai',
+        'Cotisations Juin': 'Juin',
+        'Cotisations Juillet': 'Juillet',
+        'Cotisations Aout': 'Août',
+        'Cotisations Septembre': 'Septembre',
+        'Cotisations Octobre': 'Octobre',
+        'décémbre': 'Décembre'
+        # 'Novembre' est déjà sans prefixe
+    })
     
     # Nettoyer : garder seulement les lignes avec N° valide
     df_main = df_main[df_main['N°'].notna() & df_main['N°'].apply(lambda x: str(x).isdigit() or pd.isna(x))]
@@ -43,9 +57,14 @@ if st.button("🔍 Rechercher"):
         
         if not resultats.empty:
             st.success(f"Trouvé {len(resultats)} résultat(s) :")
-            st.dataframe(resultats[['N°', 'Noms et prénoms', 'Solde au 31/12/2024', 'Janvier', 'Février', 'Mars', 
-                                    'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 
-                                    'Solde cumulé', 'CEPCA']], 
+            # Afficher les colonnes pertinentes, incluant les nouvelles
+            columns_to_display = ['N°', 'Noms et prénoms', 'Soldes au 31/12/2024', 'Janvier', 'Février', 'Mars',
+                                  'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre',
+                                  'Novembre', 'Décembre', 'Soldes cumulés', 'CEPCA', 'TENUES', 
+                                  'Fête de récolte ', 'PROMESSES', 'AGAPE']
+            # Filtrer seulement les colonnes existantes pour éviter erreurs
+            existing_columns = [col for col in columns_to_display if col in df_main.columns]
+            st.dataframe(resultats[existing_columns], 
                          use_container_width=True, hide_index=True)
             
             # Vérifier contributions supplémentaires
@@ -62,3 +81,4 @@ if st.button("🔍 Rechercher"):
 st.sidebar.title("💡 Astuces")
 st.sidebar.write("- Tapez au moins 3-4 lettres pour de meilleurs résultats.")
 st.sidebar.write("- Si plusieurs personnes ont des noms similaires, tous s'afficheront.")
+st.sidebar.write("- Pour les réclamations, notez les chiffres et contactez la trésorière.")
